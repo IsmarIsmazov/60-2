@@ -7,7 +7,9 @@ from .models import Product
 """
 select * form product;
 """
-
+# product = """
+#     select * from product where name = '{user_input}';
+# """
 """
 select * from product ILIKE where = "%phone%"
 """
