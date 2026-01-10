@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render
 
@@ -32,6 +33,7 @@ def home(request):
         return render(request, "base.html")
 
 
+@login_required(login_url="/login/")
 def product_list(request):
     if request.method == "GET":
         products = Product.objects.all()
@@ -40,6 +42,7 @@ def product_list(request):
         )
 
 
+@login_required(login_url="/login/")
 def product_detail(request, product_id):
     if request.method == "GET":
         product = Product.objects.filter(id=product_id).first()
@@ -48,6 +51,7 @@ def product_detail(request, product_id):
         )
 
 
+@login_required(login_url="/login/")
 def product_create_view(request):
     if request.method == "GET":
         form = ProductFrom()
@@ -55,7 +59,6 @@ def product_create_view(request):
     elif request.method == "POST":
         form = ProductFrom(request.POST, request.FILES)
         if form.is_valid():
-            print(form.clean_data)
             Product.objects.create(
                 name=form.cleaned_data["name"],
                 description=form.cleaned_data["description"],
