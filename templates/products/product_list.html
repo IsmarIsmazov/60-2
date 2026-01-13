@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
+<form method="GET" action="" enctype="multipart/form-data">
+    {{ form.as_p }}
+    <button type="submit">Search</button>
+</form>
 {% for product in products %}
 <div class="card" style="width: 18rem;">
     {% if product.photo %}
@@ -10,9 +14,19 @@
     {% endif %}
     <div class="card-body">
         <h5 class="card-title">name: {{product.name}}</h5>
+        <h6 class="card-title">description: {{product.description}}</h6>
         <p class="card-text">price: {{product.price}}</p>
         <a href="/products/{{product.id}}/" class="btn btn-primary">Купить</a>
     </div>
 </div>
+
 {% endfor %}
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        {% for i in max_page%}
+        <li class="page-item"><a class="page-link" href="/products/?page={{i}}">{{i}}</a></li>
+        {% endfor %}
+
+    </ul>
+</nav>
 {% endblock content %}
