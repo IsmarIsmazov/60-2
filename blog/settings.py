@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS = [
     "users",
     "product",
+    "jazzmin",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -121,3 +122,9 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 
 MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
+
+
+JAZZMIN_UI_TWEAKS = {
+    "theme": "darkly",
+    # "dark_mode_theme": "darkly",
+}

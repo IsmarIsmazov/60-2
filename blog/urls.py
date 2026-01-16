@@ -21,12 +21,13 @@ from django.contrib import admin
 from django.urls import path
 
 import product.views
-from users.views import login_view, logout_view, register_view
+from users.views import login_view, logout_view, profile_view, register_view
 
 user_patterns = [
     path("register/", register_view),
     path("login/", login_view),
     path("logout/", logout_view),
+    path("profile/", profile_view),
 ]
 
 
@@ -37,6 +38,7 @@ urlpatterns = (
         path("", product.views.home),
         path("products/", product.views.product_list),
         path("products/<int:product_id>/", product.views.product_detail),
+        path("products/<int:product_id>/update/", product.views.product_update),
         path("products/create/", product.views.product_create_view),
     ]
     + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

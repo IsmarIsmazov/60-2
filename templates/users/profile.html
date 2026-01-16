@@ -1,10 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-<form method="GET" action="" enctype="multipart/form-data">
-    {{ form.as_p }}
-    <button type="submit">Search</button>
-</form>
+<div class="card" style="width: 35rem;">
+    {% if user.profile.photo %}
+    <img src="{{user.profile.photo.url}}" class="card-img-top" alt="...">
+    {% else %}
+    <img src="/static/null_image2.png" class="card-img-top" alt="...">
+    {% endif %}
+    <h1>Name: {{user.username}}</h1>
+    <h1>Email: {{user.email}}</h1>
+    <h1>Age: {{user.profile.age}}</h1>
+</div>
+<p></p>
+<p></p>
+<h1>продукты профиля:</h1>
+<p></p>
+<p></p>
 {% for product in products %}
 <div class="card" style="width: 18rem;">
     {% if product.photo %}
@@ -17,17 +28,9 @@
         <h6 class="card-title">description: {{product.description}}</h6>
         <p class="card-text">price: {{product.price}}</p>
         <p>views: {{product.views}}</p>
-        <a href="/products/{{product.id}}/" class="btn btn-primary">Купить</a>
+        <a href="/products/{{product.id}}/update/" class="btn btn-primary">Изменить</a>
     </div>
 </div>
-
 {% endfor %}
-<nav aria-label="Page navigation example">
-    <ul class="pagination">
-        {% for i in max_page%}
-        <li class="page-item"><a class="page-link" href="/products/?page={{i}}">{{i}}</a></li>
-        {% endfor %}
 
-    </ul>
-</nav>
 {% endblock content %}

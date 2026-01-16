@@ -7,7 +7,7 @@ class ProductFrom(forms.Form):
     name = forms.CharField(max_length=10, min_length=3)
     description = forms.CharField(max_length=1000)
     price = forms.IntegerField()
-    photo = forms.ImageField()
+    photo = forms.ImageField(required=False)
 
 
 class SearchForm(forms.Form):
@@ -24,3 +24,9 @@ class SearchForm(forms.Form):
     tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(), required=False)
     ordering = forms.ChoiceField(choices=ordering, required=False)
     # random = forms.MultipleChoiceField(choices=random_list, required=False)
+
+
+class CommentForm(forms.Form):
+    rate_choices = [(1, "1"), (2, "2"), (3, "3"), (4, "4"), (5, "5")]
+    text = forms.CharField(max_length=1000)
+    rate = forms.ChoiceField(choices=rate_choices)

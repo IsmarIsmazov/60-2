@@ -9,8 +9,36 @@
     {% endif %}
     <div class="card-body">
         <h5 class="card-title">name: {{product.name}}</h5>
+        <h6 class="card-title">description: {{product.description}}</h6>
         <p class="card-text">price: {{product.price}}</p>
+        <p>views: {{product.views}}</p>
+        <p>average: {{average}}</p>
+        {% if request.user == product.user %}
+        <a href="/products/{{product.id}}/update/" class="btn btn-primary">Изменить</a>
+        {% else %}
         <a href="/products/{{product.id}}/" class="btn btn-primary">Купить</a>
+        {% endif %}
+        <form method="POST" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <button type="submit">Удалить</button>
+        </form>
+
     </div>
 </div>
+<form method="POST" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Оставить комментарий</button>
+</form>
+
+{% for comment in comments %}
+<div class="card" style="width: 18rem;">
+    <div class="card-body">
+        <p class="card-text">text: {{comment.text}}</p>
+        <p>author: {{comment.author.username}}</p>
+        <p>rate: {{comment.rate}}</p>
+    </div>
+</div>
+{% endfor %}
 {% endblock content %}

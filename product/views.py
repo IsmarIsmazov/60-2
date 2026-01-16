@@ -1,10 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
-from .form import ProductFrom, SearchForm
-from .models import Product
+from .form import CommentForm, ProductFrom, SearchForm
+from .models import Comment, Product
 
 # Create your views here.
 
@@ -76,11 +76,38 @@ def product_list(request):
 
 @login_required(login_url="/login/")
 def product_detail(request, product_id):
+    print(request.method)
     if request.method == "GET":
         product = Product.objects.filter(id=product_id).first()
+        product.views += 1
+        product.save()
+        forms = CommentForm()
+        comments = Comment.objects.filter(product_id=product_id)
+        comment_count = comments.count()
+        average = sum([comment.rate for comment in comments]) / comment_count
         return render(
-            request, "products/product_detail.html", context={"product": product}
+            request,
+            "products/product_detail.html",
+            context={
+                "product": product,
+                "form": forms,
+                "comments": comments,
+                "average": int(average),
+            },
         )
+    elif request.method == "POST":
+        forms = CommentForm(request.POST)
+        if forms.is_valid():
+            Comment.objects.create(
+                text=forms.cleaned_data["text"],
+                product_id=product_id,
+                author=request.user,
+                rate=forms.cleaned_data["rate"],
+            )
+            return redirect(f"/products/{product_id}/")
+    elif request.method == "DELETE":
+        Product.objects.filter(id=product_id).delete()
+        return redirect("/products/")
 
 
 @login_required(login_url="/login/")
@@ -98,3 +125,23 @@ def product_create_view(request):
                 photo=form.cleaned_data["photo"],
             )
         return HttpResponse("Product created")
+
+
+@login_required(login_url="/login/")
+def product_update(request, product_id):
+    if request.method == "GET":
+        product = Product.objects.filter(id=product_id).first()
+        form = ProductFrom(initial=product.__dict__)
+        return render(request, "products/product_update.html", context={"form": form})
+    elif request.method == "PUT":
+        form = ProductFrom(request.PUT, request.FILES)
+        if form.is_valid():
+            product = Product.objects.filter(id=product_id).first()
+            if request.user == product.user:
+                product.name = form.cleaned_data["name"]
+                product.description = form.cleaned_data["description"]
+                product.price = form.cleaned_data["price"]
+                product.photo = form.cleaned_data["photo"]
+                product.save()
+
+        return redirect(f"/products/{product_id}/")
