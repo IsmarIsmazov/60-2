@@ -18,16 +18,19 @@
         {% else %}
         <a href="/products/{{product.id}}/" class="btn btn-primary">Купить</a>
         {% endif %}
-        <form method="POST" action="" enctype="multipart/form-data">
+        <form method="POST">
             {% csrf_token %}
+            <input type="hidden" name="action" value="delete">
 
             <button type="submit">Удалить</button>
         </form>
 
     </div>
 </div>
-<form method="POST" action="" enctype="multipart/form-data">
+
+<form method="post">
     {% csrf_token %}
+    <input type="hidden" name="action" value="comment">
     {{ form.as_p }}
     <button type="submit">Оставить комментарий</button>
 </form>

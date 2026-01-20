@@ -96,18 +96,23 @@ def product_detail(request, product_id):
             },
         )
     elif request.method == "POST":
-        forms = CommentForm(request.POST)
-        if forms.is_valid():
-            Comment.objects.create(
-                text=forms.cleaned_data["text"],
-                product_id=product_id,
-                author=request.user,
-                rate=forms.cleaned_data["rate"],
-            )
-            return redirect(f"/products/{product_id}/")
-    elif request.method == "DELETE":
-        Product.objects.filter(id=product_id).delete()
-        return redirect("/products/")
+        if request.POST.get("action") == "comment":
+            forms = CommentForm(request.POST)
+            if forms.is_valid():
+                Comment.objects.create(
+                    text=forms.cleaned_data["text"],
+                    product_id=product_id,
+                    author=request.user,
+                    rate=forms.cleaned_data["rate"],
+                )
+                return redirect(f"/products/{product_id}/")
+        elif request.POST.get("action") == "delete":
+            product = Product.objects.filter(id=product_id, user=request.user).first()
+
+            if product:
+                product.delete()
+
+            return redirect("/products/")
 
 
 @login_required(login_url="/login/")
@@ -133,8 +138,8 @@ def product_update(request, product_id):
         product = Product.objects.filter(id=product_id).first()
         form = ProductFrom(initial=product.__dict__)
         return render(request, "products/product_update.html", context={"form": form})
-    elif request.method == "PUT":
-        form = ProductFrom(request.PUT, request.FILES)
+    elif request.method == "POST":
+        form = ProductFrom(request.POST, request.FILES)
         if form.is_valid():
             product = Product.objects.filter(id=product_id).first()
             if request.user == product.user:
